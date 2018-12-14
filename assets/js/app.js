@@ -8,39 +8,39 @@
 //
 // Import dependencies
 //
-import 'phoenix_html';
+import 'phoenix_html'
 
 // Import local files
 //
 // Local files can be imported directly using relative paths, for example:
 // import socket from "./socket"
-import '@babel/polyfill';
+import '@babel/polyfill'
 
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react'
+import ReactDOM from 'react-dom'
 
-import '../css/app.css';
-import LoginModal from './modals/LoginModal';
-import ProjectTable from './ProjectTable';
-import { get, post, put } from './api';
+import '../css/app.css'
+import LoginModal from './modals/LoginModal'
+import ProjectTable from './ProjectTable'
+import { get, post, put } from './api'
 
 
-const KEY_STORED_USER = 'key_stored_user';
+const KEY_STORED_USER = 'key_stored_user'
 
 class App extends React.Component {
   constructor() {
-    super();
+    super()
     this.state = {
       projects: [],
       users: [],
       loading: false,
-      loggedInUser: localStorage ? localStorage[KEY_STORED_USER] : null,
+      loggedInUser: null,
       loginModalOpen: true,
-    };
+    }
   }
 
   async componentWillMount() {
-    this.setState({ loading: true });
+    this.setState({ loading: true })
     Promise.all([
       get('projects')
         .then(data => this.setState({ projects: data }))
@@ -51,34 +51,45 @@ class App extends React.Component {
         .catch(error => console.log(error)),
 
     ])
-      .then(() => this.setState({ loading: false }))
-      .catch(error => console.log(error));
+      .then(() => {
+        this.setState({ loading: false })
+        this.setUser(localStorage[KEY_STORED_USER])
+      })
+      .catch(error => console.log(error))
   }
 
     setUser = (email) => {
-      const { users } = this.state;
-      const user = users.find(u => u.email === email);
+      const { users } = this.state
+      const user = users.find(u => u.email === email)
       if (user) {
-        localStorage.setItem(KEY_STORED_USER, user.email);
-        this.setState({ loggedInUser: user, loginModalOpen: false });
+        localStorage.setItem(KEY_STORED_USER, user.email)
+        this.setState({ loggedInUser: user, loginModalOpen: false })
       }
     }
 
     lockProject = (project) => {
-      const { loggedInUser } = this.state;
-      console.log({ locked_by_id: loggedInUser.id });
+      const { loggedInUser } = this.state
       put(`projects/${project.id}`, { project: { locked_by_id: loggedInUser.id } })
-        .then(projects => this.setState({ projects }));
+        .then(projects => this.setState({ projects }))
+    }
+
+    releaseProject = (project) => {
+      put(`projects/${project.id}`, { project: { locked_by_id: null } })
+        .then(projects => this.setState({ projects }))
     }
 
 
     render() {
       const {
         projects, users, loginModalOpen, loggedInUser,
-      } = this.state;
+      } = this.state
       return (
         <div>
-          <ProjectTable projects={projects} lockProject={this.lockProject} />
+          <ProjectTable
+            projects={projects}
+            lockProject={this.lockProject}
+            releaseProject={this.releaseProject}
+          />
 
           <LoginModal
             open={loginModalOpen}
@@ -87,11 +98,11 @@ class App extends React.Component {
             setUser={this.setUser}
           />
         </div>
-      );
+      )
     }
 }
 
 ReactDOM.render(
   <App />,
   document.getElementById('app-root'),
-);
+)
