@@ -11,8 +11,12 @@
 # and so on) as they will fail if something goes wrong.
 
 # RescoStick.Users.create_user(%{first_name: "Jonas", last_name: "Thuresson", email: "joth@netcompany.com"})
-jonas = RescoStick.Repo.insert!(%RescoStick.Users.User{first_name: "Jonas", last_name: "Thuresson", email: "joth@netcompany.com"})
-jakub = RescoStick.Repo.insert!(%RescoStick.Users.User{first_name: "Jakub", last_name: "Bujak", email: "jabu1@netcompany.com"})
-RescoStick.Repo.insert!(%RescoStick.Projects.Project{name: "FS-Admin", locked_by_id: jonas.id})
-RescoStick.Repo.insert!(%RescoStick.Projects.Project{name: "FSE"})
-RescoStick.Repo.insert!(%RescoStick.Projects.Project{name: "S-C"})
+jonas = RescoStick.Repo.insert!(%RescoStick.Users.User{first_name: "Jonas", last_name: "Thuresson", email: "joth123@netcompany.com"})
+jakub = RescoStick.Repo.insert!(%RescoStick.Users.User{first_name: "Jakub", last_name: "Bujak", email: "jabu123@netcompany.com"})
+jakub = RescoStick.Repo.insert!(%RescoStick.Users.User{first_name: "Daniel", last_name: "Krysztopa", email: "dkr123@netcompany.com"})
+jakub = RescoStick.Repo.insert!(%RescoStick.Users.User{first_name: "Paulina", last_name: "Stefańczyk", email: "past123@netcompany.com"})
+jakub = RescoStick.Repo.insert!(%RescoStick.Users.User{first_name: "Michał", last_name: "Banaś", email: "mban123@netcompany.com"})
+RescoStick.Repo.insert!(%RescoStick.Projects.Project{name: "AL-RSSE-FS-Admin"})
+RescoStick.Repo.insert!(%RescoStick.Projects.Project{name: "AL-RSSE-FS-FSE"})
+RescoStick.Repo.insert!(%RescoStick.Projects.Project{name: "AL-RSSE-SC-SCT"})
+RescoStick.Repo.insert!(%RescoStick.Projects.Project{name: "AlfaLavalServiceCenterNonALDev"})

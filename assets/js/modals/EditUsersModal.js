@@ -8,11 +8,10 @@ import Button from '@material-ui/core/Button'
 import InputLabel from '@material-ui/core/InputLabel'
 import Select from '@material-ui/core/Select'
 import FormControl from '@material-ui/core/FormControl'
-import MenuItem from '@material-ui/core/MenuItem'
 
 class LoginModal extends React.Component {
     state = {
-      selectedUser: '',
+      selectedUser: this.props.loggedInUser ? this.props.loggedInUser.email : '',
     }
 
     render() {
@@ -31,23 +30,23 @@ class LoginModal extends React.Component {
             <DialogContentText>
                 Sign in as
             </DialogContentText>
-            <FormControl style={{ width: '100%' }}>
+            <FormControl>
               <InputLabel htmlFor="age-native-simple">User</InputLabel>
               <Select
-                style={{ width: '100%' }}
-                value={selectedUser || (loggedInUser ? loggedInUser.email : '')}
+                native
+                value={selectedUser}
                 onChange={e => this.setState({ selectedUser: e.target.value })}
                 // inputProps={{
                 //   name: 'age',
                 //   id: 'age-native-simple',
                 // }}
               >
-                {[<MenuItem key="" value="" />].concat(users.map(user => (
-                  <MenuItem key={user.email} value={user.email}>
+                {[<option key="" value="" />].concat(users.map(user => (
+                  <option key={user.email} value={user.email}>
                     {user.first_name}
                     {' '}
                     {user.last_name}
-                  </MenuItem>
+                  </option>
                 )))}
               </Select>
             </FormControl>

@@ -18,11 +18,18 @@ import '@babel/polyfill'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
+// import Snackbar from '@material-ui/core/Snackbar'
+// import CircularProgress from '@material-ui/core/CircularProgress'
+// import Fade from '@material-ui/core/Fade'
+
 
 import '../css/app.css'
 import LoginModal from './modals/LoginModal'
 import ProjectTable from './ProjectTable'
-import { get, post, put } from './api'
+import AppBar from './AppBar'
+import Drawer from './Drawer'
+
+import { get, put } from './api'
 
 
 const KEY_STORED_USER = 'key_stored_user'
@@ -36,6 +43,7 @@ class App extends React.Component {
       loading: false,
       loggedInUser: null,
       loginModalOpen: true,
+      drawerOpen: false,
     }
   }
 
@@ -54,6 +62,7 @@ class App extends React.Component {
       .then(() => {
         this.setState({ loading: false })
         this.setUser(localStorage[KEY_STORED_USER])
+        this.pollProjects()
       })
       .catch(error => console.log(error))
   }
@@ -68,35 +77,58 @@ class App extends React.Component {
     }
 
     lockProject = (project) => {
+      this.setState({ loading: true })
       const { loggedInUser } = this.state
       put(`projects/${project.id}`, { project: { locked_by_id: loggedInUser.id } })
-        .then(projects => this.setState({ projects }))
+        .then(projects => this.setState({ projects, loading: false }))
     }
 
     releaseProject = (project) => {
+      this.setState({ loading: true })
       put(`projects/${project.id}`, { project: { locked_by_id: null } })
-        .then(projects => this.setState({ projects }))
+        .then(projects => this.setState({ projects, loading: false }))
     }
 
+    pollProjects = () => setTimeout(
+      () => get('projects')
+        .then(data => this.setState({ projects: data }))
+        .catch(error => console.log(error))
+        .finally(() => this.pollProjects()),
+      10000,
+    )
+
+    toggleDrawer = (open) => {
+      const { drawerOpen } = this.state
+      this.setState({ drawerOpen: open === false || open === true ? open : !drawerOpen })
+    }
+
+    toggleLoginModal = (open) => {
+      const { loginModalOpen } = this.state
+      this.setState({ loginModalOpen: open === false || open === true ? open : !loginModalOpen })
+    }
 
     render() {
       const {
-        projects, users, loginModalOpen, loggedInUser,
+        projects, users, loginModalOpen, loggedInUser, drawerOpen, loading,
       } = this.state
       return (
         <div>
+          <AppBar openLoginModal={() => this.setState({ loginModalOpen: true })} onMenuClick={this.toggleDrawer} />
           <ProjectTable
             projects={projects}
             lockProject={this.lockProject}
             releaseProject={this.releaseProject}
+            loggedInUser={loggedInUser}
           />
-
+          <Drawer open={drawerOpen} close={this.toggleDrawer} />
           <LoginModal
             open={loginModalOpen}
+            close={() => this.toggleLoginModal(false)}
             users={users}
             loggedInUser={loggedInUser}
             setUser={this.setUser}
           />
+          {/* <Snackbar open={loading} message={<div style={{ textAlign: 'center', width: '100%' }}><CircularProgress /></div>} /> */}
         </div>
       )
     }

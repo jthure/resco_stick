@@ -10,7 +10,8 @@ const api = (path, urlArgs, opts) => fetch(
   { ...opts },
 ).then(res => res.json()).then(json => json.data)
 const get = (path, args) => api(path, args)
-const post = (path, body) => api(path, null, { method: 'POST', body: JSON.stringify(body), headers })
-const put = (path, body) => api(path, null, { method: 'PUT', body: JSON.stringify(body), headers })
+const _post = (path, body, method) => api(path, null, { method: method || 'POST', body: JSON.stringify(body), headers })
+const post = (path, body) => _post(path, body)
+const put = (path, body) => _post(path, body, 'PUT')
 
 export { get, post, put }
