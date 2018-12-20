@@ -1,4 +1,3 @@
-pwd
-npm run deploy
+webpack --mode production
 cd $phoenix_dir
 mix "${phoenix_ex}.digest"
