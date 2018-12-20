@@ -113,7 +113,11 @@ class App extends React.Component {
       } = this.state
       return (
         <div>
-          <AppBar openLoginModal={() => this.setState({ loginModalOpen: true })} onMenuClick={this.toggleDrawer} />
+          <AppBar
+            openLoginModal={() => this.setState({ loginModalOpen: true })}
+            onMenuClick={this.toggleDrawer}
+            loggedInUser={loggedInUser}
+          />
           <ProjectTable
             projects={projects}
             lockProject={this.lockProject}
