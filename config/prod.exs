@@ -11,6 +11,8 @@ use Mix.Config
 # before starting your production server.
 config :resco_stick, RescoStickWeb.Endpoint,
   # http: [:inet6, port: System.get_env("PORT") || 4000],
+  load_from_system_env: true,
+  http: [port: {:system, "PORT"}],
   url: [scheme: "https", host: "rescostick.herokuapp.com", port: 443],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   cache_static_manifest: "priv/static/cache_manifest.json",
