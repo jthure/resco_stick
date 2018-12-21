@@ -27,7 +27,7 @@ class LoginModal extends React.Component {
           aria-labelledby="form-dialog-title"
         >
           <DialogTitle id="form-dialog-title">Sign in</DialogTitle>
-          <DialogContent>
+          <DialogContent style={{minWidth: '300px'}}>
             <DialogContentText>
                 Sign in as
             </DialogContentText>

@@ -64,7 +64,7 @@ class App extends React.Component {
       .then(() => {
         this.setState({ loading: false })
         this.setUser(localStorage[KEY_STORED_USER])
-        // this.pollProjects()
+        this.pollProjects()
       })
       .catch(error => console.log(error))
   }
