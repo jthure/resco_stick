@@ -9,7 +9,7 @@ import Button from '@material-ui/core/Button'
 
 const lockButton = (lockProject, project) => (
   <Button
-    style={{ width: '150px' }}
+    style={{ width: '120px' }}
     variant="outlined"
     color="secondary"
     onClick={() => lockProject(project)}
@@ -18,7 +18,7 @@ const lockButton = (lockProject, project) => (
   </Button>)
 const releaseButton = (releaseProject, project, loggedInUser) => (
   <Button
-    style={{ width: '150px' }}
+    style={{ width: '120px' }}
     variant="outlined"
     color="primary"
     disabled={project.locked_by && loggedInUser && project.locked_by.email !== loggedInUser.email}
@@ -29,7 +29,13 @@ const releaseButton = (releaseProject, project, loggedInUser) => (
 
 
 const projectTableRows = (projects, lockProject, releaseProject, loggedInUser) => projects.map(project => (
-  <TableRow key={project.name} style={{ border: project.locked_by ? '2px solid red' : undefined }}>
+  <TableRow
+    key={project.name}
+    style={{
+      border: project.locked_by ? '2px solid red' : undefined,
+      backgroundColor: project.locked_by && loggedInUser && project.locked_by.email !== loggedInUser.email ? '#ffdbdb' : undefined,
+    }}
+  >
     <TableCell>{project.name}</TableCell>
     <TableCell>
       {project.locked_by
@@ -44,13 +50,15 @@ const projectTableRows = (projects, lockProject, releaseProject, loggedInUser) =
   </TableRow>
 ))
 
-const ProjectTable = ({ projects, lockProject, releaseProject, loggedInUser }) => (
+const ProjectTable = ({
+ projects, lockProject, releaseProject, loggedInUser 
+}) => (
   <Paper>
     <Table>
       <TableHead>
-        <TableRow>
-          <TableCell>Project</TableCell>
-          <TableCell>Locked by</TableCell>
+        <TableRow style={{ backgroundColor: '#f7f7f7' }}>
+          <TableCell style={{ fontSize: '0.9rem' }}>Project</TableCell>
+          <TableCell style={{ fontSize: '0.9rem' }}>Locked by</TableCell>
           <TableCell />
         </TableRow>
       </TableHead>

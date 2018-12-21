@@ -26,11 +26,13 @@ defmodule RescoStickWeb.ProjectController do
   end
 
   def update(conn, %{"id" => id, "project" => project_params}) do
-    Projects.get_project!(id)
-    |> Projects.update_project(project_params)
+    case Projects.get_project!(id)
+    |> Projects.update_project(project_params) do
+      {:error, message} -> render(conn, "index.json", %{projects: Projects.list_projects_with_relations(), error: message})
+      _ -> render(conn, "index.json", projects: Projects.list_projects_with_relations())
+    end
 
-    projects = Projects.list_projects_with_relations()
-    render(conn, "index.json", projects: projects)
+
   end
 
   def delete(conn, %{"id" => id}) do

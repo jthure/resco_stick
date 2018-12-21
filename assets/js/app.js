@@ -25,6 +25,7 @@ import ReactDOM from 'react-dom'
 
 import '../css/app.css'
 import LoginModal from './modals/LoginModal'
+import ErrorModal from './modals/ErrorModal'
 import ProjectTable from './ProjectTable'
 import AppBar from './AppBar'
 import Drawer from './Drawer'
@@ -43,6 +44,7 @@ class App extends React.Component {
       loading: false,
       loggedInUser: null,
       loginModalOpen: true,
+      errorModal: { open: false },
       drawerOpen: false,
     }
   }
@@ -51,18 +53,18 @@ class App extends React.Component {
     this.setState({ loading: true })
     Promise.all([
       get('projects')
-        .then(data => this.setState({ projects: data }))
+        .then(({ data }) => this.setState({ projects: data }))
         .catch(error => console.log(error)),
 
       get('users')
-        .then(data => this.setState({ users: data }))
+        .then(({ data }) => this.setState({ users: data }))
         .catch(error => console.log(error)),
 
     ])
       .then(() => {
         this.setState({ loading: false })
         this.setUser(localStorage[KEY_STORED_USER])
-        this.pollProjects()
+        // this.pollProjects()
       })
       .catch(error => console.log(error))
   }
@@ -80,18 +82,29 @@ class App extends React.Component {
       this.setState({ loading: true })
       const { loggedInUser } = this.state
       put(`projects/${project.id}`, { project: { locked_by_id: loggedInUser.id } })
-        .then(projects => this.setState({ projects, loading: false }))
+        .then(({ data, error }) => {
+          if (error) {
+            this.setState({
+              errorModal: {
+                open: true,
+                level: 'Warning',
+                message: 'The project was already locked. The state should be updated now',
+              },
+            })
+          }
+          this.setState({ projects: data, loading: false })
+        })
     }
 
     releaseProject = (project) => {
       this.setState({ loading: true })
       put(`projects/${project.id}`, { project: { locked_by_id: null } })
-        .then(projects => this.setState({ projects, loading: false }))
+        .then(({ data }) => this.setState({ projects: data, loading: false }))
     }
 
     pollProjects = () => setTimeout(
       () => get('projects')
-        .then(data => this.setState({ projects: data }))
+        .then(({ data }) => this.setState({ projects: data }))
         .catch(error => console.log(error))
         .finally(() => this.pollProjects()),
       10000,
@@ -109,7 +122,7 @@ class App extends React.Component {
 
     render() {
       const {
-        projects, users, loginModalOpen, loggedInUser, drawerOpen, loading,
+        projects, users, loginModalOpen, loggedInUser, drawerOpen, loading, errorModal,
       } = this.state
       return (
         <div>
@@ -131,6 +144,12 @@ class App extends React.Component {
             users={users}
             loggedInUser={loggedInUser}
             setUser={this.setUser}
+          />
+          <ErrorModal
+            open={errorModal.open}
+            close={() => this.setState({ errorModal: { open: false } })}
+            level={errorModal.level}
+            message={errorModal.message}
           />
           {/* <Snackbar open={loading} message={<div style={{ textAlign: 'center', width: '100%' }}><CircularProgress /></div>} /> */}
         </div>

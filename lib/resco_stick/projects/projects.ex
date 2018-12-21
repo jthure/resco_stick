@@ -85,9 +85,13 @@ defmodule RescoStick.Projects do
 
   """
   def update_project(%Project{} = project, attrs) do
-    project
-    |> Project.changeset(attrs)
-    |> Repo.update()
+    if(project.locked_by_id && Map.get(attrs, "locked_by_id")) do
+      {:error, "Project is already locked. Unlock it first."}
+    else
+      project
+      |> Project.changeset(attrs)
+      |> Repo.update()
+    end
   end
 
   @doc """

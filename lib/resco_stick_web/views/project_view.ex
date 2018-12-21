@@ -2,6 +2,10 @@ defmodule RescoStickWeb.ProjectView do
   use RescoStickWeb, :view
   alias RescoStickWeb.ProjectView
 
+  def render("index.json", %{projects: projects, error: error_message}) do
+    %{data: render_many(projects, ProjectView, "project.json"), error: error_message}
+  end
+
   def render("index.json", %{projects: projects}) do
     %{data: render_many(projects, ProjectView, "project.json")}
   end
